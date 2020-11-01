@@ -1,0 +1,11 @@
+/build/
+
+.vscode
+
+.DS_Store
+
+# */terraform.tfstate
+*/terraform.tfvars
+*/terraform.tfstate.backup
+*/.terraform
+*/mykey*
