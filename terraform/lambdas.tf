@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "s3-segredo-app-api-code" {
 
 resource "null_resource" "build_and_upload_code_to_s3" {
   provisioner "local-exec" {
-    command = "cd ${path.module}/.. && ./build.sh && aws s3 cp ./build/segredo-app-api.zip s3://${aws_s3_bucket.s3-segredo-app-api-code.id}"
+    command = "cd ${path.module}/.. && ./build.sh && aws s3 cp ./build/segredo-app-api.zip s3://${aws_s3_bucket.s3-segredo-app-api-code.id}/${var.APP_VERSION}"
   }
 }
 
@@ -16,7 +16,7 @@ resource "aws_lambda_function" "segredo_app_api" {
   function_name = "SegredoAppAPI"
 
   s3_bucket = aws_s3_bucket.s3-segredo-app-api-code.id
-  s3_key    = "segredo-app-api.zip"
+  s3_key    = "${var.APP_VERSION}/segredo-app-api.zip"
 
   handler = "handler.handler"
   runtime = "python3.8"
