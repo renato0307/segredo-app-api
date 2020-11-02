@@ -12,7 +12,7 @@ resource "null_resource" "build_and_upload_code_to_s3" {
   }
 }
 
-resource "aws_lambda_function" "segredo_app_api_lambda" {
+resource "aws_lambda_function" "segredo_app_api" {
   function_name = "SegredoAppAPI"
 
   s3_bucket = aws_s3_bucket.s3-segredo-app-api-code.id
@@ -21,12 +21,12 @@ resource "aws_lambda_function" "segredo_app_api_lambda" {
   handler = "handler.handler"
   runtime = "python3.8"
 
-  role = aws_iam_role.segredo_app_api_lambda_exec.arn
+  role = aws_iam_role.segredo_app_api_exec.arn
 
   depends_on = [null_resource.build_and_upload_code_to_s3]
 }
 
-resource "aws_iam_role" "segredo_app_api_lambda_exec" {
+resource "aws_iam_role" "segredo_app_api_exec" {
   name = "SegredoAppAPILambdaExecRole"
   assume_role_policy = <<EOF
 {
@@ -46,19 +46,13 @@ EOF
 
 }
 
-resource "aws_dynamodb_table" "secrets-table" {
-  name           = "Secrets"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "SecretId"
+resource "aws_lambda_permission" "apigw" {
+   statement_id  = "AllowAPIGatewayInvoke"
+   action        = "lambda:InvokeFunction"
+   function_name = aws_lambda_function.segredo_app_api.function_name
+   principal     = "apigateway.amazonaws.com"
 
-  attribute {
-    name = "SecretId"
-    type = "S"
-  }
-
-  ttl {
-    attribute_name = "TimeToExist"
-    enabled        = true
-  }
-
+   # The "/*/*" portion grants access from any method on any resource
+   # within the API Gateway REST API.
+   source_arn = "${aws_api_gateway_rest_api.segredo_app_api.execution_arn}/*/*"
 }
