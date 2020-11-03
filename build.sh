@@ -1,6 +1,20 @@
 #! /bin/bash
 set -e
 
+if [ $# -eq 0 ]
+  then
+    echo ""
+    echo "build.sh script"
+    echo ""
+    echo "Usage:"
+    echo "  build.sh <version>"
+    echo ""
+    echo "Example:"
+    echo "  build.sh 0.0.1"
+    echo ""
+    exit 1
+fi
+
 # clear build folder
 rm -rf build && mkdir build
 
