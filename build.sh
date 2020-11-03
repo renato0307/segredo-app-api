@@ -12,5 +12,6 @@ pip install -r requirements_runtime.txt --target build
 
 # zip the code
 cd build
-zip segredo-app-api.zip *
+zip segredo-app-api-$1.zip *
+aws s3 cp segredo-app-api-$1.zip s3://segredo-app-api-code
 cd ..
