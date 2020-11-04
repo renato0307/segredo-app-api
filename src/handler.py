@@ -1,13 +1,16 @@
 """
 """
 
+RESOURCE = "/{proxy+}"
+PATH = "/path"
+
 
 def handler(event, context):
-    if event.get("resource") != "/{proxy+}":
+    if event.get("resource") != RESOURCE:
         return _invalid_request()
 
     path = event.get("path")
-    if path != "/secret":
+    if path != PATH:
         return _invalid_path(path)
 
     method = event.get("httpMethod")
