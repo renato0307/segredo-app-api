@@ -1,2 +1,4 @@
 boto3
 requests
+moto
+pytest-mock
